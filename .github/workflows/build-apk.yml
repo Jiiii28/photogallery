@@ -1,10 +1,9 @@
-name: Build Ionic Android APK
+name: Build Android APK
 
 on:
   push:
     branches:
       - main
-      - master
   workflow_dispatch:
 
 jobs:
@@ -39,12 +38,12 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x android/gradlew
 
-      - name: Build Debug APK
+      - name: Build APK
         working-directory: android
         run: ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: IonicPhotoGallery-APK
+          name: photo-gallery-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
