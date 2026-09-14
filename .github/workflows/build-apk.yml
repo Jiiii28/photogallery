@@ -12,58 +12,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Get the source code
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
+          cache-dependency-path: photo-gallery/package-lock.json
 
-      # 3. Setup Java JDK
       - name: Setup Java JDK
         uses: actions/setup-java@v5
         with:
-          distribution: temurin
-          java-version: 21
+          distribution: 'zulu'
+          java-version: '17'
 
-      # 4. Install Dependencies
       - name: Install Dependencies
-        working-directory: photo-gallery
-        run: npm ci
+        run: |
+          cd photo-gallery
+          npm ci
 
-      # 5. Build Web Assets
       - name: Build Web Assets
-        working-directory: photo-gallery
-        run: npm run build
+        run: |
+          cd photo-gallery
+          npm run build
 
-      # 6. Sync Capacitor Android
       - name: Sync Capacitor Android
-        working-directory: photo-gallery
-        run: npx cap sync android
+        run: |
+          cd photo-gallery
+          npx cap sync android
 
-      # 7. Make Gradle executable
-      - name: Make Gradle Executable
-        working-directory: photo-gallery/android
-        run: chmod +x gradlew
+      - name: Build Debug APK
+        run: |
+          cd photo-gallery/android
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
-      # 8. Check Gradle version
-      - name: Check Gradle Version
-        working-directory: photo-gallery/android
-        run: ./gradlew --version
-
-      # 9. Build Debug APK
-      - name: Build Android APK
-        working-directory: photo-gallery/android
-        run: ./gradlew assembleDebug
-
-      # 10. Upload APK
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: IonicPhotoGallery-APK
           path: photo-gallery/android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
-          retention-days: 30
