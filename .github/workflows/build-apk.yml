@@ -21,8 +21,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: photo-gallery/package-lock.json
 
       # 3. Setup Java JDK
       - name: Setup Java JDK
